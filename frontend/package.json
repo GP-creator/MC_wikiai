@@ -1,0 +1,9 @@
+{
+  "name": "craftmind-frontend",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "echo \"Wired up in Increment 6\" && exit 1"
+  }
+}
