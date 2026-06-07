@@ -1,1 +1,142 @@
-[]
+[
+  {
+    "category": "enchanting",
+    "query": "What does the Mending enchantment do?",
+    "expected_topics": ["xp", "experience", "durability", "repair"],
+    "should_cite": "Mending",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "enchanting",
+    "query": "How much does Sharpness V increase melee damage on a sword?",
+    "expected_topics": ["sharpness", "damage", "level", "extra"],
+    "should_cite": "Sharpness",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "enchanting",
+    "query": "Is Unbreaking III worth it on tools and how does it work?",
+    "expected_topics": ["unbreaking", "durability", "chance"],
+    "should_cite": "Unbreaking",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "enchanting",
+    "query": "Can Mending and Infinity coexist on the same bow?",
+    "expected_topics": ["mending", "infinity", "bow"],
+    "should_cite": "Mending",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "enchanting",
+    "query": "What does Looting III do to mob drops?",
+    "expected_topics": ["looting", "drops", "rare"],
+    "should_cite": "Looting",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "location",
+    "query": "What y-level should I mine at for diamonds in Java 1.21?",
+    "expected_topics": ["diamond", "y", "-58", "-59", "-50", "level"],
+    "should_cite": "Diamond",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "location",
+    "query": "Where can I find a Stronghold and how many are there per world?",
+    "expected_topics": ["stronghold", "end portal"],
+    "should_cite": "Stronghold",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "location",
+    "query": "Which biome should I look in for a Nether Fortress?",
+    "expected_topics": ["nether", "fortress"],
+    "should_cite": "Nether Fortress",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "location",
+    "query": "Where does Netherite spawn and how deep do I need to dig?",
+    "expected_topics": ["netherite", "ancient debris", "y"],
+    "should_cite": "Netherite",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "location",
+    "query": "What's the safest biome to set up an early-game base?",
+    "expected_topics": ["plains", "forest", "biome"],
+    "should_cite": "Biome",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "mechanics",
+    "query": "How does the Fortune enchantment affect ore drops?",
+    "expected_topics": ["fortune", "drops", "chance"],
+    "should_cite": "Fortune",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "mechanics",
+    "query": "How does mob spawning work — what conditions are required?",
+    "expected_topics": ["spawn", "light"],
+    "should_cite": "Spawning",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "mechanics",
+    "query": "Walk me through brewing a basic potion.",
+    "expected_topics": ["brewing", "stand", "blaze"],
+    "should_cite": "Brewing",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "mechanics",
+    "query": "How does the Ender Dragon's fight work and what does it drop?",
+    "expected_topics": ["dragon", "egg", "end"],
+    "should_cite": "Ender Dragon",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "mechanics",
+    "query": "What does the Efficiency enchantment do and how does it stack?",
+    "expected_topics": ["efficiency", "mining", "speed"],
+    "should_cite": "Efficiency",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "tradeoff",
+    "query": "On diamond ore, should I use Fortune or Silk Touch?",
+    "expected_topics": ["fortune", "silk touch", "diamond"],
+    "should_cite": "Fortune",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "tradeoff",
+    "query": "Is Protection IV better than four specialized protection enchants?",
+    "expected_topics": ["protection"],
+    "should_cite": "Protection",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "tradeoff",
+    "query": "Should I kill the Ender Dragon solo or wait for friends? What's the prep needed?",
+    "expected_topics": ["dragon", "end"],
+    "should_cite": "Ender Dragon",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "tradeoff",
+    "query": "Is it worth upgrading from diamond to netherite gear?",
+    "expected_topics": ["netherite", "diamond"],
+    "should_cite": "Netherite",
+    "should_not_hallucinate": true
+  },
+  {
+    "category": "tradeoff",
+    "query": "Should I use a bed or beacons to navigate the Nether?",
+    "expected_topics": ["nether"],
+    "should_cite": "Nether Fortress",
+    "should_not_hallucinate": false
+  }
+]

@@ -29,7 +29,7 @@ from retriever import RetrievedChunk, retrieve, warmup
 # Load .env from the repo root if present.
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
-GEMINI_MODEL_NAME = "gemini-2.5-flash"  # successor to gemini-1.5-flash; 2.0 has no free quota on new keys
+LLM_MODEL_NAME = "llama-3.1-8b-instant"  # served by Groq; ~30 RPM free tier, sub-second responses
 TOP_K = 5
 SNIPPET_LEN = 240
 REFUSAL = "I don't have reliable information on that."
@@ -91,34 +91,35 @@ def _dedupe_sources(chunks: List[RetrievedChunk], max_sources: int = 3) -> List[
     return sources
 
 
-def _call_gemini(user_prompt: str) -> str:
-    """Send the assembled prompt to Gemini and return the response text.
+def _call_llm(user_prompt: str) -> str:
+    """Send the assembled prompt to Groq and return the response text.
 
     Raises RuntimeError on auth/quota/network failures so the route handler
-    can convert it to a clean HTTP 502.
+    can convert it to a clean HTTP 502. (We swapped from Gemini to Groq for
+    free-tier RPM headroom — Gemini's 10 RPM made evals impractical.)
     """
-    import google.generativeai as genai  # local import keeps test_retriever lightweight
+    from groq import Groq  # local import keeps test_retriever lightweight
 
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("GROQ_API_KEY")
     if not api_key or api_key == "your_key_here":
         raise RuntimeError(
-            "GEMINI_API_KEY is not set. Copy .env.example to .env and add your key."
+            "GROQ_API_KEY is not set. Copy .env.example to .env and add your key."
         )
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        GEMINI_MODEL_NAME,
-        system_instruction=SYSTEM_PROMPT,
-        generation_config={"temperature": 0.2, "max_output_tokens": 800},
-    )
+    client = Groq(api_key=api_key)
     try:
-        response = model.generate_content(user_prompt)
+        response = client.chat.completions.create(
+            model=LLM_MODEL_NAME,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.2,
+            max_tokens=800,
+        )
     except Exception as exc:
-        raise RuntimeError(f"gemini call failed: {exc}") from exc
-    try:
-        return response.text.strip()
-    except Exception:
-        # Blocked or empty candidate — surface a clean refusal instead of crashing.
-        return REFUSAL
+        raise RuntimeError(f"groq call failed: {exc}") from exc
+    text = response.choices[0].message.content
+    return text.strip() if text else REFUSAL
 
 
 def answer_question(question: str, top_k: int = TOP_K) -> Answer:
@@ -133,7 +134,7 @@ def answer_question(question: str, top_k: int = TOP_K) -> Answer:
 
     confidence = _confidence_from_scores([c.score for c in chunks])
     user_prompt = build_user_prompt(question, chunks)
-    answer_text = _call_gemini(user_prompt)
+    answer_text = _call_llm(user_prompt)
     sources = _dedupe_sources(chunks)
     return Answer(answer=answer_text, sources=sources, confidence=confidence)
 
@@ -190,9 +191,9 @@ def health() -> dict:
     try:
         from retriever import _load_index
         chunks, _ = _load_index()
-        return {"status": "ok", "chunks": len(chunks), "model": GEMINI_MODEL_NAME}
+        return {"status": "ok", "chunks": len(chunks), "model": LLM_MODEL_NAME}
     except FileNotFoundError:
-        return {"status": "degraded", "reason": "wiki_chunks.json not built", "model": GEMINI_MODEL_NAME}
+        return {"status": "degraded", "reason": "wiki_chunks.json not built", "model": LLM_MODEL_NAME}
 
 
 @app.post("/query", response_model=QueryResponse)
@@ -206,7 +207,7 @@ def query(req: QueryRequest) -> QueryResponse:
     except RuntimeError as exc:
         msg = str(exc)
         log.error("query failed: %s", msg)
-        if "GEMINI_API_KEY" in msg:
+        if "GROQ_API_KEY" in msg:
             raise HTTPException(status_code=500, detail=msg)
         raise HTTPException(status_code=502, detail="LLM provider error")
     return QueryResponse(
