@@ -1,6 +1,16 @@
 """Embedding utilities backed by sentence-transformers."""
 from __future__ import annotations
 
+import os
+
+# Force offline mode if the model is already cached. sentence-transformers
+# otherwise tries to validate the model against huggingface.co on every load,
+# which hangs the backend for ~60s when the network is blocked or flaky.
+# To force a refresh, run `python -m huggingface_hub.commands.huggingface_cli
+# download sentence-transformers/all-MiniLM-L6-v2` with the env vars unset.
+os.environ.setdefault("HF_HUB_OFFLINE", "1")
+os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
+
 from functools import lru_cache
 from typing import Iterable
 
